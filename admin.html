@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Owner Panel - Dolat Sahu</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background-color: #0b0f19; color: #ffffff; padding-bottom: 110px; }
+
+        .login-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #0b0f19; display: flex; justify-content: center; align-items: center; z-index: 99999;
+        }
+        .login-box {
+            background: #151a28; padding: 30px; border-radius: 15px; width: 90%; max-width: 400px;
+            border: 1px solid rgba(212, 175, 55, 0.3); text-align: center;
+        }
+        .login-box i { font-size: 3rem; color: #d4af37; margin-bottom: 15px; }
+        .login-box h2 { color: #d4af37; margin-bottom: 20px; }
+        .input-field {
+            width: 100%; padding: 12px; margin-bottom: 15px; background: #1a2235;
+            border: 1px solid rgba(212, 175, 55, 0.2); border-radius: 8px; color: #fff; font-size: 1rem;
+        }
+        .btn-gold {
+            width: 100%; padding: 12px; background: linear-gradient(135deg, #d4af37, #aa8c2c);
+            color: #000; font-weight: 700; border: none; border-radius: 25px; cursor: pointer; font-size: 1rem;
+        }
+
+        header {
+            background: #151a28; padding: 15px 20px; display: flex; justify-content: space-between;
+            align-items: center; border-bottom: 1px solid rgba(212, 175, 55, 0.2); sticky: top; z-index: 100;
+        }
+        header h1 { font-size: 1.1rem; color: #d4af37; }
+        .header-btns { display: flex; gap: 8px; }
+        .btn-sm {
+            padding: 6px 12px; background: transparent; border: 1px solid #d4af37;
+            color: #d4af37; border-radius: 15px; font-size: 0.8rem; text-decoration: none; cursor: pointer;
+        }
+
+        .nav-tabs {
+            display: flex; gap: 8px; padding: 12px 15px; background: #0f1422;
+            overflow-x: auto; border-bottom: 1px solid rgba(255,255,255,0.05); white-space: nowrap;
+        }
+        .tab-btn {
+            padding: 8px 14px; background: #1a2235; color: #a0aec0; border: none;
+            border-radius: 20px; font-size: 0.82rem; cursor: pointer; display: flex; align-items: center; gap: 6px;
+        }
+        .tab-btn.active { background: #d4af37; color: #000; font-weight: 600; }
+
+        .main-container { padding: 20px 15px; max-width: 800px; margin: 0 auto; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        .card {
+            background: #151a28; padding: 18px; border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.05); margin-bottom: 20px;
+        }
+        .card h3 { color: #d4af37; margin-bottom: 15px; font-size: 1.05rem; border-bottom: 1px solid rgba(212,175,55,0.1); padding-bottom: 8px; }
+
+        .form-group { margin-bottom: 14px; }
+        .form-group label { display: block; color: #a0aec0; font-size: 0.82rem; margin-bottom: 5px; }
+        .form-control {
+            width: 100%; padding: 10px 12px; background: #1a2235; border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px; color: #fff; font-size: 0.9rem;
+        }
+        textarea.form-control { height: 75px; resize: vertical; }
+
+        .item-box-edit {
+            background: #1a2235; padding: 12px; border-radius: 8px; margin-bottom: 12px;
+            border: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; gap: 8px;
+        }
+        .btn-del {
+            background: #e74c3c; color: white; border: none; padding: 6px 12px;
+            border-radius: 5px; cursor: pointer; font-size: 0.78rem; align-self: flex-end;
+        }
+
+        .img-preview { width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 2px solid #d4af37; margin-top: 10px; }
+
+        .floating-save {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            width: 90%; max-width: 410px; background: linear-gradient(135deg, #d4af37, #aa8c2c);
+            color: #000; padding: 14px; text-align: center; font-weight: 700; border-radius: 30px;
+            border: none; box-shadow: 0 5px 20px rgba(0,0,0,0.6); cursor: pointer; font-size: 1rem; z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- LOGIN SCREEN -->
+    <div class="login-screen" id="loginScreen">
+        <div class="login-box">
+            <i class="fa fa-user-shield"></i>
+            <h2>Owner Login</h2>
+            <input type="text" id="loginUser" class="input-field" placeholder="Username">
+            <input type="password" id="loginPass" class="input-field" placeholder="Password">
+            <button class="btn-gold" onclick="doLogin()">LOGIN</button>
+        </div>
+    </div>
+
+    <!-- HEADER -->
+    <header>
+        <h1><i class="fa fa-crown"></i> DS Admin Panel</h1>
+        <div class="header-btns">
+            <a href="index.html" target="_blank" class="btn-sm"><i class="fa fa-eye"></i> View Site</a>
+            <button onclick="doLogout()" class="btn-sm" style="border-color:#e74c3c; color:#e74c3c;"><i class="fa fa-power-off"></i></button>
+        </div>
+    </header>
+
+    <!-- TABS MENU -->
+    <div class="nav-tabs">
+        <button class="tab-btn active" onclick="switchTab('tab-hero', event)"><i class="fa fa-user"></i> Profile</button>
+        <button class="tab-btn" onclick="switchTab('tab-bio', event)"><i class="fa fa-id-card"></i> Bio Data</button>
+        <button class="tab-btn" onclick="switchTab('tab-services', event)"><i class="fa fa-laptop-code"></i> Services</button>
+        <button class="tab-btn" onclick="switchTab('tab-features', event)"><i class="fa fa-shield"></i> Features</button>
+        <button class="tab-btn" onclick="switchTab('tab-tech', event)"><i class="fa fa-code"></i> Tech Stack</button>
+        <button class="tab-btn" onclick="switchTab('tab-contact', event)"><i class="fa fa-whatsapp"></i> WhatsApp</button>
+        <button class="tab-btn" onclick="switchTab('tab-security', event)"><i class="fa fa-key"></i> Security</button>
+    </div>
+
+    <div class="main-container">
+
+        <!-- 1. PROFILE & HERO -->
+        <div id="tab-hero" class="tab-content active">
+            <div class="card">
+                <h3><i class="fa fa-image"></i> Profile Photo & Title</h3>
+                <div class="form-group">
+                    <label>Profile Photo Select Karein (Gallery):</label>
+                    <input type="file" accept="image/*" class="form-control" onchange="handleImageUpload(event)">
+                    <img id="imgPreview" src="" class="img-preview">
+                </div>
+                <div class="form-group">
+                    <label>Main Title Name:</label>
+                    <input type="text" id="heroTitle" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>Sub Description:</label>
+                    <textarea id="heroSubtext" class="form-control"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. BIO DATA -->
+        <div id="tab-bio" class="tab-content">
+            <div class="card">
+                <h3><i class="fa fa-list"></i> Personal Bio Data Lines</h3>
+                <div id="bioList"></div>
+                <button class="btn-gold" style="padding:8px; font-size:0.85rem;" onclick="addBioItem()">+ Add Bio Line</button>
+            </div>
+        </div>
+
+        <!-- 3. SERVICES MANAGER -->
+        <div id="tab-services" class="tab-content">
+            <div class="card">
+                <h3><i class="fa fa-briefcase"></i> Services (What I Can Develop)</h3>
+                <div id="servicesList"></div>
+                <button class="btn-gold" style="padding:8px; font-size:0.85rem;" onclick="addServiceItem()">+ Add Service Card</button>
+            </div>
+        </div>
+
+        <!-- 4. FEATURES MANAGER -->
+        <div id="tab-features" class="tab-content">
+            <div class="card">
+                <h3><i class="fa fa-star"></i> Why Work With Me Features</h3>
+                <div id="featuresList"></div>
+                <button class="btn-gold" style="padding:8px; font-size:0.85rem;" onclick="addFeatureItem()">+ Add Feature Card</button>
+            </div>
+        </div>
+
+        <!-- 5. TECH STACK MANAGER -->
+        <div id="tab-tech" class="tab-content">
+            <div class="card">
+                <h3><i class="fa fa-cubes"></i> Technologies & Skills Badges</h3>
+                <div id="techList"></div>
+                <button class="btn-gold" style="padding:8px; font-size:0.85rem;" onclick="addTechItem()">+ Add Skill Badge</button>
+            </div>
+        </div>
+
+        <!-- 6. CONTACT & WHATSAPP -->
+        <div id="tab-contact" class="tab-content">
+            <div class="card">
+                <h3><i class="fa fa-whatsapp"></i> WhatsApp Settings</h3>
+                <div class="form-group">
+                    <label>WhatsApp Mobile Number:</label>
+                    <input type="text" id="waNumber" class="form-control" placeholder="917546982355">
+                </div>
+                <div class="form-group">
+                    <label>Default Message Text:</label>
+                    <textarea id="waText" class="form-control"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- 7. SECURITY -->
+        <div id="tab-security" class="tab-content">
+            <div class="card">
+                <h3><i class="fa fa-lock"></i> Change Login Credentials</h3>
+                <div class="form-group">
+                    <label>New Username:</label>
+                    <input type="text" id="newUsername" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>New Password:</label>
+                    <input type="password" id="newPassword" class="form-control" placeholder="Enter new password">
+                </div>
+                <button class="btn-gold" onclick="updateSecurity()">UPDATE CREDENTIALS</button>
+            </div>
+        </div>
+
+    </div>
+
+    <button class="floating-save" onclick="saveAllContent()"><i class="fa fa-save"></i> SAVE ALL CHANGES</button>
+
+    <script>
+        const STORAGE_KEY = 'ds_website_data_store';
+        const AUTH_KEY = 'ds_admin_auth_status';
+
+        const defaultData = {
+            auth: { username: '7546982355', password: '7546982355' },
+            hero: { imgUrl: 'https://i.ibb.co/RpVD8ts8/profile.jpg', title: "Hello, I'm Dolat Sahu Jee", subtext: "I am website and app developer. Website banana hai to contact kare hamse. Thanks" },
+            contact: { waNumber: '917546982355', text: 'Website ya App banwane ke liye direct WhatsApp par message karein.' },
+            biodata: [
+                { label: 'Full Name', value: 'Dolat Kumar Sahu' },
+                { label: 'Date of Birth', value: '24 / 12 / 2012' },
+                { label: 'Height', value: '5.8 Feet' },
+                { label: 'Blood Group', value: 'O' },
+                { label: 'Education', value: 'Coding' },
+                { label: 'Skills', value: 'Website & App Development' },
+                { label: 'Religion / Caste', value: 'Hindu - Sahu' },
+                { label: 'Marital Status', value: 'Unmarried' }
+            ],
+            services: [
+                { icon: 'fa-solid fa-globe', title: 'Web Development', desc: 'Personal portfolio, business websites & landing pages.' },
+                { icon: 'fa-solid fa-mobile-screen-button', title: 'App Development', desc: 'Fast & lightweight Android web view and native apps.' },
+                { icon: 'fa-solid fa-robot', title: 'Automation & Bots', desc: 'Python script automation & Telegram bot integration.' },
+                { icon: 'fa-solid fa-wand-magic-sparkles', title: 'UI/UX Redesign', desc: 'Purani website ko modern luxury dark gold look dena.' }
+            ],
+            features: [
+                { icon: 'fa-solid fa-bolt', title: 'Super Fast Performance', desc: 'Clean code with ultra-fast page load speed.' },
+                { icon: 'fa-solid fa-mobile', title: '100% Mobile Responsive', desc: 'Har mobile screen par perfect fit & high resolution UI.' },
+                { icon: 'fa-solid fa-headset', title: 'Direct WhatsApp Support', desc: 'Instant resolution & 24/7 direct communication.' }
+            ],
+            techStack: [
+                { icon: 'fa-brands fa-html5', name: 'HTML5' },
+                { icon: 'fa-brands fa-css3-alt', name: 'CSS3' },
+                { icon: 'fa-brands fa-js', name: 'JavaScript' },
+                { icon: 'fa-brands fa-python', name: 'Python' },
+                { icon: 'fa-solid fa-server', name: 'Flask Framework' },
+                { icon: 'fa-brands fa-android', name: 'Android Apps' }
+            ]
+        };
+
+        let db;
+
+        function initData() {
+            let local = localStorage.getItem(STORAGE_KEY);
+            if (!local) { db = defaultData; localStorage.setItem(STORAGE_KEY, JSON.stringify(db)); }
+            else { db = JSON.parse(local); }
+            populateUI();
+        }
+
+        function populateUI() {
+            document.getElementById('imgPreview').src = db.hero.imgUrl || '';
+            document.getElementById('heroTitle').value = db.hero.title || '';
+            document.getElementById('heroSubtext').value = db.hero.subtext || '';
+
+            document.getElementById('waNumber').value = db.contact.waNumber || '';
+            document.getElementById('waText').value = db.contact.text || '';
+            document.getElementById('newUsername').value = db.auth.username || '';
+
+            renderBioList();
+            renderServicesList();
+            renderFeaturesList();
+            renderTechList();
+        }
+
+        function handleImageUpload(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    db.hero.imgUrl = evt.target.result;
+                    document.getElementById('imgPreview').src = evt.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function renderBioList() {
+            const box = document.getElementById('bioList');
+            box.innerHTML = '';
+            db.biodata.forEach((item, index) => {
+                box.innerHTML += `
+                    <div class="item-box-edit">
+                        <input type="text" class="form-control" placeholder="Label" value="${item.label}" onchange="db.biodata[${index}].label = this.value">
+                        <input type="text" class="form-control" placeholder="Value" value="${item.value}" onchange="db.biodata[${index}].value = this.value">
+                        <button class="btn-del" onclick="db.biodata.splice(${index},1); renderBioList();"><i class="fa fa-trash"></i> Delete Line</button>
+                    </div>`;
+            });
+        }
+        function addBioItem() { db.biodata.push({ label: 'New Label', value: 'New Value' }); renderBioList(); }
+
+        function renderServicesList() {
+            const box = document.getElementById('servicesList');
+            box.innerHTML = '';
+            db.services.forEach((srv, index) => {
+                box.innerHTML += `
+                    <div class="item-box-edit">
+                        <input type="text" class="form-control" placeholder="Icon Class" value="${srv.icon}" onchange="db.services[${index}].icon = this.value">
+                        <input type="text" class="form-control" placeholder="Title" value="${srv.title}" onchange="db.services[${index}].title = this.value">
+                        <input type="text" class="form-control" placeholder="Description" value="${srv.desc}" onchange="db.services[${index}].desc = this.value">
+                        <button class="btn-del" onclick="db.services.splice(${index},1); renderServicesList();"><i class="fa fa-trash"></i> Delete Service</button>
+                    </div>`;
+            });
+        }
+        function addServiceItem() { db.services.push({ icon: 'fa-solid fa-star', title: 'New Service', desc: 'Service description.' }); renderServicesList(); }
+
+        function renderFeaturesList() {
+            const box = document.getElementById('featuresList');
+            box.innerHTML = '';
+            db.features.forEach((ft, index) => {
+                box.innerHTML += `
+                    <div class="item-box-edit">
+                        <input type="text" class="form-control" placeholder="Icon Class" value="${ft.icon}" onchange="db.features[${index}].icon = this.value">
+                        <input type="text" class="form-control" placeholder="Feature Title" value="${ft.title}" onchange="db.features[${index}].title = this.value">
+                        <input type="text" class="form-control" placeholder="Feature Description" value="${ft.desc}" onchange="db.features[${index}].desc = this.value">
+                        <button class="btn-del" onclick="db.features.splice(${index},1); renderFeaturesList();"><i class="fa fa-trash"></i> Delete Feature</button>
+                    </div>`;
+            });
+        }
+        function addFeatureItem() { db.features.push({ icon: 'fa-solid fa-check', title: 'New Feature', desc: 'Feature details.' }); renderFeaturesList(); }
+
+        function renderTechList() {
+            const box = document.getElementById('techList');
+            box.innerHTML = '';
+            db.techStack.forEach((t, index) => {
+                box.innerHTML += `
+                    <div class="item-box-edit">
+                        <input type="text" class="form-control" placeholder="Icon Class" value="${t.icon}" onchange="db.techStack[${index}].icon = this.value">
+                        <input type="text" class="form-control" placeholder="Skill Name" value="${t.name}" onchange="db.techStack[${index}].name = this.value">
+                        <button class="btn-del" onclick="db.techStack.splice(${index},1); renderTechList();"><i class="fa fa-trash"></i> Delete Skill</button>
+                    </div>`;
+            });
+        }
+        function addTechItem() { db.techStack.push({ icon: 'fa-solid fa-code', name: 'New Skill' }); renderTechList(); }
+
+        function saveAllContent() {
+            db.hero.title = document.getElementById('heroTitle').value;
+            db.hero.subtext = document.getElementById('heroSubtext').value;
+            db.contact.waNumber = document.getElementById('waNumber').value;
+            db.contact.text = document.getElementById('waText').value;
+
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
+            alert('🎉 All Website Changes Saved Successfully!');
+        }
+
+        function updateSecurity() {
+            const u = document.getElementById('newUsername').value.trim();
+            const p = document.getElementById('newPassword').value;
+            if(u) db.auth.username = u;
+            if(p) db.auth.password = p;
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
+            alert('Security Credentials Updated!');
+        }
+
+        function switchTab(tabId, evt) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            evt.currentTarget.classList.add('active');
+        }
+
+        function doLogin() {
+            const u = document.getElementById('loginUser').value;
+            const p = document.getElementById('loginPass').value;
+            if (u === db.auth.username && p === db.auth.password) {
+                sessionStorage.setItem(AUTH_KEY, 'true');
+                document.getElementById('loginScreen').style.display = 'none';
+            } else { alert('Galat Username ya Password!'); }
+        }
+
+        function doLogout() {
+            sessionStorage.removeItem(AUTH_KEY);
+            location.reload();
+        }
+
+        initData();
+        if (sessionStorage.getItem(AUTH_KEY) === 'true') {
+            document.getElementById('loginScreen').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
